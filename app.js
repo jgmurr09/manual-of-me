@@ -793,7 +793,7 @@ function drawIntroCanvas(){
   if(!introBlocks.length && p.intro)introBlocks.push(['THE 30-SECOND VERSION',p.intro]);
   introBlocks.slice(0,5).forEach(([label,text])=>{y=introBlock(ctx,label,text,72,y,936,s);});
   ctx.fillStyle=s.accent;roundRect(ctx,72,c.height-162,936,82,18,true);ctx.fillStyle=t===2?COLORS.navy:'#fff';ctx.font='700 28px Arial';ctx.fillText('HUMAN CENTERED. MISSION FOCUSED.',105,c.height-111);ctx.fillStyle=s.sub;ctx.font='400 18px Arial';ctx.fillText('Brought to you by TANG Onboarding · Review before sharing.',72,c.height-38);
-  drawTangLogo(ctx,810,c.height-156,170,true);
+  drawTangLogo(ctx,850,c.height-72,140,t===1);
 }
 function introBlock(ctx,label,text,x,y,w,s){ctx.fillStyle=s.sub;ctx.font='700 18px Arial';ctx.fillText(label,x,y);ctx.fillStyle=s.ink;ctx.font='700 34px Arial';const end=drawWrapped(ctx,text,x,y+42,w,42);return end+76;}
 function drawCanvasPhoto(ctx,src,x,y,w,h,name){ctx.save();roundRect(ctx,x,y,w,h,28,false);ctx.clip();if(src){const img=new Image();img.onload=()=>{ctx.save();roundRect(ctx,x,y,w,h,28,false);ctx.clip();const r=Math.max(w/img.width,h/img.height),dw=img.width*r,dh=img.height*r;ctx.drawImage(img,x+(w-dw)/2,y+(h-dh)/2,dw,dh);ctx.restore();};img.src=src;}else{ctx.fillStyle=COLORS.orange;ctx.fillRect(x,y,w,h);ctx.fillStyle='white';ctx.font=`700 ${Math.round(w*.28)}px Arial`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(initials(name),x+w/2,y+h/2);ctx.textAlign='start';ctx.textBaseline='alphabetic';}ctx.restore();}
