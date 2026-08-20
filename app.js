@@ -13,6 +13,9 @@ const COLORS = {
   pink:'#e5018c', yellow:'#fed727', sky:'#7bc7e5', ice:'#d5e3e9', purple:'#7d6b9d'
 };
 
+const TANG_LOGO = new Image();
+TANG_LOGO.src = 'assets/tang-logo-white.png';
+
 const POWER_SKILLS = [
   { id:'collaboration', label:'Collaboration & Team Mindset', core:true, desc:'Invites input and builds shared ownership across disciplines.' },
   { id:'givingFeedback', label:'Giving Feedback', core:true, desc:'Shares constructive input kindly to help others grow.' },
@@ -145,7 +148,6 @@ const RESOURCES = [
   { category:'HCD', mark:'HCD', title:'IDEO: Design Thinking', desc:'A fast public introduction to design thinking and the mindset behind the practice.', access:'Public', url:'https://www.youtube.com/watch?v=McTh-xzxfRE', topic:'hcd', duration:'4 min' },
   { category:'HCD', mark:'HCD', title:'Design Thinking Frameworks: Quick Overview', desc:'A lightweight overview of common frameworks. Use it as orientation, not a rigid recipe.', access:'Public', url:'https://ixdf.org/literature/article/design-thinking-a-quick-overview', topic:'hcd', duration:'10 min' },
   { category:'HCD', mark:'LUMA', title:'APL LUMA Courses', desc:'Three deeper learning options: Fundamentals of Innovation through HCD, HCD Mini-Trainings, and Innovative Techniques to Think Differently.', access:'Internal', url:'', topic:'hcd', duration:'Up to 16 hrs' },
-  { category:'HCD', mark:'DVIDS', title:'Design Thinking with Warfighters', desc:'A public DVIDS story showing Navy teams using design thinking sprints to identify high-priority problems and generate potential solutions.', access:'Public', url:'https://www.dvidshub.net/news/451060/nswc-pcd-design-thinking-aims-deliver-tangible-solutions', topic:'navy', duration:'5 min' },
   { category:'Tools', mark:'MIRO', title:'Miro Essentials', desc:'Get comfortable collaborating in the team’s UNCLASS whiteboarding environment.', access:'Public', url:'https://academy.miro.com/path/miro-essentials', topic:'miro', duration:'Self-paced' },
   { category:'Tools', mark:'SLACK', title:'Slack Quick Start', desc:'Learn the basics of the team’s main messaging and collaboration environment.', access:'Public', url:'https://slack.com/help/articles/360059928654-How-to-use-Slack--your-quick-start-guide', topic:'slack', duration:'10–20 min' },
   { category:'Tools', mark:'LIST', title:'Slack Lists', desc:'A quick guide to using Slack’s built-in lists for lightweight task tracking.', access:'Public', url:'https://slack.com/help/articles/27588021944339-Slack-lists--Track-project-tasks', topic:'slack', duration:'5–10 min' },
@@ -191,7 +193,7 @@ const PATRICK_EXAMPLE = {
     intro:'Patrick is an HCD strategist who brings together history, submarine operations, Navy acquisition, and undersea experience. He gravitates toward hard problems where people, culture, technology, history, and the future collide.',
     fun:'Stillness, solitude, family time, and looking for inspiration in uncommon places.',
     knowTooMuch:'Submarines, Navy acquisition, undersea systems, and history.',
-    proud:'Building a career that bridges academia, the submarine community, Navy acquisition, and HCD—and using that range to help teams move complexity toward action.',
+    proud:'Building a career that bridges academia, the submarine community, Navy acquisition, and HCD and using that range to help teams move complexity toward action.',
     askMeAbout:'Submarines, Navy context, history, or a hard problem worth unpacking.',
     communicationStyle:'Thoughtful + curious', workingStyle:'Reflective + collaborative',
     teamMakesGreat:['Curiosity','Shared ownership','Trust'], teamOther:'',
@@ -671,6 +673,7 @@ function drawManualCanvas(){
   ctx.fillStyle='#f5f3ee';ctx.fillRect(0,0,c.width,c.height);ctx.fillStyle=COLORS.navy;ctx.fillRect(0,0,c.width,270);
   [COLORS.blue,COLORS.orange,COLORS.yellow,COLORS.pink].forEach((col,i)=>{ctx.fillStyle=col;ctx.fillRect(i*400,260,400,10);});
   drawCanvasPhoto(ctx,p.photo,95,72,150,150,p.name);ctx.fillStyle='white';ctx.font='700 68px Arial';ctx.fillText(p.name||'Your Name',280,130);ctx.font='400 28px Arial';ctx.fillStyle='#c9d2dd';ctx.fillText('MANUAL OF ME · TANG ONBOARDING',282,184);
+  drawTangLogo(ctx,1260,72,250);
 
   let y=335;
   y=canvasSection(ctx,'THE 30-SECOND VERSION',p.intro||'Add a short introduction.',90,y,1420,40);
@@ -790,10 +793,20 @@ function drawIntroCanvas(){
   if(!introBlocks.length && p.intro)introBlocks.push(['THE 30-SECOND VERSION',p.intro]);
   introBlocks.slice(0,5).forEach(([label,text])=>{y=introBlock(ctx,label,text,72,y,936,s);});
   ctx.fillStyle=s.accent;roundRect(ctx,72,c.height-162,936,82,18,true);ctx.fillStyle=t===2?COLORS.navy:'#fff';ctx.font='700 28px Arial';ctx.fillText('HUMAN CENTERED. MISSION FOCUSED.',105,c.height-111);ctx.fillStyle=s.sub;ctx.font='400 18px Arial';ctx.fillText('Brought to you by TANG Onboarding · Review before sharing.',72,c.height-38);
+  drawTangLogo(ctx,810,c.height-156,170,true);
 }
 function introBlock(ctx,label,text,x,y,w,s){ctx.fillStyle=s.sub;ctx.font='700 18px Arial';ctx.fillText(label,x,y);ctx.fillStyle=s.ink;ctx.font='700 34px Arial';const end=drawWrapped(ctx,text,x,y+42,w,42);return end+76;}
 function drawCanvasPhoto(ctx,src,x,y,w,h,name){ctx.save();roundRect(ctx,x,y,w,h,28,false);ctx.clip();if(src){const img=new Image();img.onload=()=>{ctx.save();roundRect(ctx,x,y,w,h,28,false);ctx.clip();const r=Math.max(w/img.width,h/img.height),dw=img.width*r,dh=img.height*r;ctx.drawImage(img,x+(w-dw)/2,y+(h-dh)/2,dw,dh);ctx.restore();};img.src=src;}else{ctx.fillStyle=COLORS.orange;ctx.fillRect(x,y,w,h);ctx.fillStyle='white';ctx.font=`700 ${Math.round(w*.28)}px Arial`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(initials(name),x+w/2,y+h/2);ctx.textAlign='start';ctx.textBaseline='alphabetic';}ctx.restore();}
 function roundRect(ctx,x,y,w,h,r,fill=false,stroke=false){ctx.beginPath();ctx.roundRect(x,y,w,h,r);if(fill)ctx.fill();if(stroke)ctx.stroke();}
+function drawTangLogo(ctx,x,y,w,badge=false){
+  const h=w*.4;
+  const paint=()=>{
+    if(badge){ctx.fillStyle=COLORS.navy;roundRect(ctx,x-16,y-8,w+32,h+16,14,true);}
+    ctx.drawImage(TANG_LOGO,x,y,w,h);
+  };
+  if(TANG_LOGO.complete&&TANG_LOGO.naturalWidth)paint();
+  else TANG_LOGO.addEventListener('load',paint,{once:true});
+}
 function downloadCanvas(id,filename){const c=document.querySelector('#'+id);if(!c)return toast('That export is not on this page yet.');const a=document.createElement('a');a.download=filename;a.href=c.toDataURL('image/png');a.click();toast('Downloaded.');}
 function printManual(){const c=document.querySelector('#manualCanvas');const win=window.open('','_blank');if(!win)return toast('Pop-up blocked. Try Download Manual PNG instead.');win.document.write(`<title>Manual of Me</title><style>body{margin:0;display:grid;place-items:center;background:#eee}img{max-width:100%;height:auto}@media print{body{background:white}img{width:100%}}</style><img src="${c.toDataURL('image/png')}"><script>setTimeout(()=>window.print(),400)<\/script>`);win.document.close();}
 function copyIntroText(){const p=state.profile;const text=`Meet ${p.name||'our newest teammate'}!\n\n${p.intro||''}\n\nBrings: ${p.strengths.map(skillLabel).join(', ')||'—'}\nWants to grow: ${p.growth.map(skillLabel).join(', ')||'—'}\nKnows way too much about: ${p.knowTooMuch||'—'}\nAsk ${p.name?.split(' ')[0]||'them'} about: ${p.askMeAbout||p.fun||'—'}\nGood to know: ${[p.snack,p.drink].filter(Boolean).join(' + ')||'—'}`;navigator.clipboard?.writeText(text).then(()=>toast('Slack intro copied.')).catch(()=>toast('Could not access clipboard.'));}
@@ -844,6 +857,7 @@ function drawOnboardingCanvas(){
   c.width=1600;c.height=Math.max(1900,Math.ceil(my+250));
   const ctx=c.getContext('2d');
   ctx.fillStyle='#f5f3ee';ctx.fillRect(0,0,c.width,c.height);ctx.fillStyle=COLORS.navy;ctx.fillRect(0,0,c.width,300);drawCanvasPhoto(ctx,p.photo,95,75,150,150,p.name);ctx.fillStyle='white';ctx.font='700 62px Arial';ctx.fillText(p.name||'Your Name',280,135);ctx.font='400 27px Arial';ctx.fillStyle='#c9d2dd';ctx.fillText('TANG ONBOARDING TEAM BRIEF',282,188);ctx.fillStyle=COLORS.yellow;ctx.fillRect(0,290,c.width,10);
+  drawTangLogo(ctx,1260,78,250);
   let y=360;y=canvasSection(ctx,'HOW I LEARN',learn,90,y,1420,30);y=canvasSection(ctx,'ACCESS TODAY',access,90,y,1420,28);
   ctx.fillStyle=COLORS.blue;ctx.font='700 22px Arial';ctx.fillText('WHERE TO LEAN IN',90,y);y+=34;
   [...supportSummaryList(),...toolSummaryList()].forEach((x,i)=>{ctx.fillStyle='#fff';roundRect(ctx,90,y,1420,72,14,true);ctx.fillStyle=[COLORS.pink,COLORS.orange,COLORS.yellow,'#0d8a65'][x.meta.value??0];ctx.beginPath();ctx.arc(125,y+36,10,0,Math.PI*2);ctx.fill();ctx.fillStyle=COLORS.navy;ctx.font='700 25px Arial';ctx.fillText(x.label,155,y+33);ctx.fillStyle=COLORS.gray;ctx.font='400 22px Arial';ctx.fillText(x.meta.label,980,y+33);y+=84;});
