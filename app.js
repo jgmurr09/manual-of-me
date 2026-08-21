@@ -33,19 +33,19 @@ const POWER_SKILLS = [
 ];
 
 const SUPPORT_LEVELS = [
-  { value:3, short:'I’m good', label:'Skip the basics', className:'skip' },
-  { value:2, short:'Quick refresh', label:'Quick refresher', className:'quick' },
-  { value:1, short:'Show me', label:'Guided walkthrough', className:'guided' },
-  { value:0, short:'Start at zero', label:'Build the foundation', className:'deep' },
+  { value:3, short:'I’m Good', label:'Skip the Basics', className:'skip' },
+  { value:2, short:'Quick Refresh', label:'Quick Refresher', className:'quick' },
+  { value:1, short:'Show Me', label:'Guided Walkthrough', className:'guided' },
+  { value:0, short:'Start at Zero', label:'Build the Foundation', className:'deep' },
 ];
 
 const SUPPORT_TOPICS = [
   { id:'hcd', label:'Human-Centered Design', time:'10–30 min' },
-  { id:'navy', label:'Navy + mission context', time:'15–30 min' },
-  { id:'culture', label:'TANG history, lingo + culture', time:'10–20 min' },
-  { id:'impact', label:'Deliverables + how we create impact', time:'15–30 min' },
-  { id:'people', label:'Who’s who + getting connected', time:'10–20 min' },
-  { id:'experiences', label:'Experiences, events + getting into the field', time:'As available' },
+  { id:'navy', label:'Navy + Mission Context', time:'15–30 min' },
+  { id:'culture', label:'TANG History, Lingo + Culture', time:'10–20 min' },
+  { id:'impact', label:'Deliverables + How We Create Impact', time:'15–30 min' },
+  { id:'people', label:'Who’s Who + Getting Connected', time:'10–20 min' },
+  { id:'experiences', label:'Experiences, Events + Getting Into the Field', time:'As available' },
 ];
 
 const TOOL_TOPICS = [
@@ -57,7 +57,7 @@ const TOOL_TOPICS = [
 ];
 
 const ACCESS_OPTIONS = [
-  'APL / NVD access', 'TANG Slack', 'Box', 'CAC', 'Flank Speed', 'Still waiting / not sure'
+  'APL / NVD access', 'TANG Slack', 'Box', 'CAC', 'Flank Speed', 'Still Waiting / Not Sure'
 ];
 
 const LEARNING_MODES = [
@@ -70,12 +70,12 @@ const LEARNING_MODES = [
 
 const SPECTRA = [
   { id:'direction', left:'Room to explore', right:'Clear destination' },
-  { id:'collaboration', left:'Heads-down focus', right:'Bounce ideas together' },
+  { id:'collaboration', left:'Heads down focus', right:'Bounce ideas together' },
   { id:'pace', left:'Time to think', right:'Move + iterate' },
   { id:'startingPoint', left:'Big picture first', right:'Concrete example first' },
 ];
 
-const CAREER_STAGES = ['Student / intern','Early career','Mid-career','Senior / experienced','Other / varies'];
+const CAREER_STAGES = ['Student / Intern','Early Career','Mid-Career','Senior / Experienced','Other / Varies'];
 const CONNECTION_TYPES = ['APL Teammate','TANG Teammate','Navy / Government Teammate','Other / still figuring it out'];
 const APL_GROUPS = ['FPS','AMDS','AOS','COMM','REDD','ITSD','NSAD','SES','Other'];
 const TANG_PARTNERS = ['2Mi','Evans Consulting','RL Leaders','Rockwood Company','Informed XP','Other'];
@@ -370,7 +370,7 @@ const WELCOME_FRAMES = [
   },
   {
     kicker:'MANUAL OF ME',
-    title:'Bring your perspective. Make your mark.',
+    title:'Bring your perspective. Time to make your mark.',
     body:'Build this in a few short bursts. At the end you will have a Manual of Me, a teammate intro card, and a practical onboarding brief to send back to us.',
     mark:'GO'
   }
@@ -965,7 +965,7 @@ function drawOnboardingCanvas(){
   const choicesList=[...supportSummaryList(),...toolSummaryList()];
   if(choices){
     choices.width=1600;choices.height=2071;const ctx=choices.getContext('2d');
-    drawOnboardingHeader(ctx,p,'PAGE 1 · THEIR CHOICES','What they told us');
+    drawOnboardingHeader(ctx,p,'PAGE 1 · YOUR CHOICES','Notes for Onboarding Team');
     let y=448;y=canvasSection(ctx,'HOW I LEARN',learn,90,y,1420,29);y=canvasSection(ctx,'ACCESS TODAY',access,90,y,1420,27);
     ctx.fillStyle=COLORS.blue;ctx.font='700 22px Arial';ctx.fillText('SUPPORT + TOOL CHOICES',90,y);y+=34;
     y=drawChoiceCards(ctx,choicesList,90,y,1420);
@@ -975,7 +975,7 @@ function drawOnboardingCanvas(){
   }
   if(actions){
     actions.width=1600;actions.height=2071;const ctx=actions.getContext('2d');
-    drawOnboardingHeader(ctx,p,'PAGE 2 · TEAM ACTIONS','What we should do next');
+    drawOnboardingHeader(ctx,p,'PAGE 2 · TEAM ACTIONS','Creating into Actionable Tasks to Support Your Experience');
     ctx.fillStyle='#fff';roundRect(ctx,90,445,1420,112,18,true);ctx.fillStyle=COLORS.navy;ctx.font='700 25px Arial';ctx.fillText('USE THEIR PREFERENCES TO CHANGE THE ONBOARDING EXPERIENCE',120,488);ctx.fillStyle=COLORS.gray;ctx.font='400 22px Arial';drawWrapped(ctx,`${learningSentence()} These are recommended team behaviors, not extra tasks for the new teammate.`,120,527,1360,29);
     ctx.fillStyle=COLORS.blue;ctx.font='700 22px Arial';ctx.fillText('ACTIONABLE RESULTS',90,610);
     drawActionCards(ctx,teamActionList(),90,642,1420);
