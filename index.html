@@ -44,6 +44,37 @@
     <a class="tang-edge-link" href="microsoft-edge:https://www.navsea.navy.mil/Resources/TANG/" title="Open the TANG website in Microsoft Edge">TANG website ↗</a>
   </div>
 
+  <button id="resourceChatbotLauncher" class="resource-chatbot-launcher" type="button" aria-label="Open the resource chatbot">
+    <span class="resource-chatbot-launcher__icon">?</span>
+    <span>Resources help</span>
+  </button>
+
+  <div id="resourceChatbot" class="resource-chatbot" aria-live="polite" aria-hidden="true">
+    <div class="resource-chatbot__panel" role="dialog" aria-modal="false" aria-labelledby="resourceChatbotTitle">
+      <div class="resource-chatbot__header">
+        <div>
+          <p class="resource-chatbot__eyebrow">TANG resource assistant</p>
+          <h3 id="resourceChatbotTitle">Need a quick guide?</h3>
+        </div>
+        <button type="button" class="resource-chatbot__close" id="closeResourceChatbot" aria-label="Close chatbot">×</button>
+      </div>
+
+      <div class="resource-chatbot__body">
+        <div class="resource-chatbot__message resource-chatbot__message--bot">I can help with onboarding, HCD basics, Navy context, tools, or where to start.</div>
+        <div class="resource-chatbot__suggestions">
+          <button type="button" class="resource-chatbot__suggestion" data-chat-question="What should I read first?">What should I read first?</button>
+          <button type="button" class="resource-chatbot__suggestion" data-chat-question="Where do I start with Miro?">Where do I start with Miro?</button>
+          <button type="button" class="resource-chatbot__suggestion" data-chat-question="What do I need to know about TANG culture?">What do I need to know about TANG culture?</button>
+        </div>
+      </div>
+
+      <form class="resource-chatbot__composer" id="resourceChatbotForm">
+        <input type="text" id="resourceChatbotInput" placeholder="Ask a resource question..." aria-label="Ask the resource chatbot" />
+        <button type="submit" class="btn primary">Send</button>
+      </form>
+    </div>
+  </div>
+
   <main id="app" tabindex="-1"></main>
   <div id="liveRegion" class="sr-only" aria-live="polite"></div>
 

@@ -5,6 +5,11 @@ const menuButton = document.querySelector('#menuButton');
 const mobileNav = document.querySelector('#mobileNav');
 const backupInput = document.querySelector('#backupInput');
 const tourButton = document.querySelector('#tourButton');
+const resourceChatbotLauncher = document.querySelector('#resourceChatbotLauncher');
+const resourceChatbot = document.querySelector('#resourceChatbot');
+const resourceChatbotForm = document.querySelector('#resourceChatbotForm');
+const resourceChatbotInput = document.querySelector('#resourceChatbotInput');
+const closeResourceChatbotButton = document.querySelector('#closeResourceChatbot');
 
 const STORAGE_KEY = 'tang-manual-of-me-v3';
 const LEGACY_STORAGE_KEY = 'tang-manual-of-me-v2';
@@ -280,8 +285,17 @@ function hasManualData(){ const p=state.profile; return !!(p.name || p.intro || 
 function setRoute(route){
   state.route=route; state.wizard=false; saveState();
   document.querySelectorAll('[data-route]').forEach(b=>b.classList.toggle('active',b.dataset.route===route));
-  mobileNav.hidden=true; menuButton.setAttribute('aria-expanded','false'); render();
+  mobileNav.hidden=true; menuButton.setAttribute('aria-expanded','false');
+  updateResourceChatbotVisibility();
+  render();
   window.scrollTo({top:0,behavior:'smooth'}); app.focus({preventScroll:true});
+}
+function updateResourceChatbotVisibility(){
+  const isResourcesPage = state.route === 'resources';
+  if(resourceChatbotLauncher){
+    resourceChatbotLauncher.style.display = isResourcesPage ? 'inline-flex' : 'none';
+  }
+  if(!isResourcesPage) closeResourceChatbot();
 }
 function render(){
   document.querySelectorAll('[data-route]').forEach(b=>b.classList.toggle('active',b.dataset.route===state.route));
@@ -300,9 +314,105 @@ function render(){
 
 brandButton.addEventListener('click',()=>setRoute('home'));
 menuButton.addEventListener('click',()=>{const open=menuButton.getAttribute('aria-expanded')==='true';menuButton.setAttribute('aria-expanded',String(!open));mobileNav.hidden=open;});
-document.addEventListener('click',e=>{const routeBtn=e.target.closest('[data-route]');if(routeBtn)setRoute(routeBtn.dataset.route);});
+document.addEventListener('click',e=>{
+  const routeBtn=e.target.closest('[data-route]');
+  if(routeBtn){
+    if(routeBtn.dataset.route==='resources') openResourceChatbot();
+    setRoute(routeBtn.dataset.route);
+  }
+});
 backupInput.addEventListener('change',importBackup);
 tourButton.addEventListener('click',launchTour);
+
+if(resourceChatbotLauncher){
+  resourceChatbotLauncher.addEventListener('click',()=>{
+    if(state.route === 'resources') openResourceChatbot();
+  });
+}
+
+function openResourceChatbot(){
+  if(!resourceChatbot) return;
+  resourceChatbot.classList.add('visible');
+  resourceChatbot.setAttribute('aria-hidden','false');
+  if(resourceChatbotLauncher) resourceChatbotLauncher.style.display = 'none';
+  setTimeout(()=>resourceChatbotInput?.focus(),80);
+}
+function closeResourceChatbot(){
+  if(!resourceChatbot) return;
+  resourceChatbot.classList.remove('visible');
+  resourceChatbot.setAttribute('aria-hidden','true');
+  if(resourceChatbotLauncher) resourceChatbotLauncher.style.display = 'inline-flex';
+}
+function addResourceChatbotMessage(text, isUser=false){
+  if(!resourceChatbot) return;
+  const body=resourceChatbot.querySelector('.resource-chatbot__body');
+  if(!body) return;
+  const message=document.createElement('div');
+  message.className=`resource-chatbot__message ${isUser ? 'resource-chatbot__message--user' : 'resource-chatbot__message--bot'}`;
+  message.textContent=text;
+  body.appendChild(message);
+  body.scrollTop = body.scrollHeight;
+}
+function extractResourceChatbotReply(data){
+  if(data == null) return 'I received an empty response from the resource assistant. Please try again.';
+  if(typeof data === 'string') return data.trim() || 'I could not generate a reply.';
+  if(typeof data !== 'object') return String(data);
+
+  const nested = data.message || data.result || data.data || data.payload;
+  if(nested && typeof nested === 'object') return extractResourceChatbotReply(nested);
+
+  return data.reply || data.message || data.response || data.answer || data.output || data.content || data.text || 'I could not generate a reply.';
+}
+
+async function answerResourceQuestion(question){
+  const q=question.trim();
+  if(!q) return;
+
+  addResourceChatbotMessage(q, true);
+
+  try {
+    const response = await fetch('/api/chat', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ message: q })
+    });
+
+    if(!response.ok) {
+      throw new Error(`Chat endpoint failed: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log(data);
+    const reply = extractResourceChatbotReply(data);
+
+    addResourceChatbotMessage(reply, false);
+  } catch (error) {
+    console.error('Resource chatbot fetch failed:', error);
+    addResourceChatbotMessage('Sorry — I could not reach the FastAPI chat service. Please make sure the backend is running on localhost:8000.', false);
+  }
+}
+
+if(resourceChatbotForm){
+  resourceChatbotForm.addEventListener('submit', e=>{
+    e.preventDefault();
+    const question = resourceChatbotInput?.value || '';
+    answerResourceQuestion(question);
+    if(resourceChatbotInput) resourceChatbotInput.value='';
+  });
+}
+if(closeResourceChatbotButton){ closeResourceChatbotButton.addEventListener('click', closeResourceChatbot); }
+if(resourceChatbotLauncher){ resourceChatbotLauncher.addEventListener('click', openResourceChatbot); }
+if(resourceChatbot){
+  resourceChatbot.querySelectorAll('.resource-chatbot__suggestion').forEach(button=>{
+    button.addEventListener('click',()=>{
+      const question = button.dataset.chatQuestion || '';
+      if(question){
+        if(resourceChatbotInput) resourceChatbotInput.value = question;
+        answerResourceQuestion(question);
+      }
+    });
+  });
+}
 
 
 const WELCOME_FRAMES = [
