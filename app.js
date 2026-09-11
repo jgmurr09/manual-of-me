@@ -76,7 +76,7 @@ const SPECTRA = [
 ];
 
 const CAREER_STAGES = ['Student / Intern','Early Career','Mid-Career','Senior / Experienced','Other / Varies'];
-const CONNECTION_TYPES = ['APL Teammate','TANG Teammate','Navy / Government Teammate','Other / still figuring it out'];
+const CONNECTION_TYPES = ['APL Teammate','TANG Partner','Navy / Government Teammate','Other / still figuring it out'];
 const APL_GROUPS = ['FPS','AMDS','AOS','COMM','REDD','ITSD','NSAD','SES','Other'];
 const TANG_PARTNERS = ['2Mi','Evans Consulting','RL Leaders','Rockwood Company','Informed XP','Other'];
 
