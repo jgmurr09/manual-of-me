@@ -1,5 +1,5 @@
 /* Project-specific Manuals are independent, editable snapshots for collaboration. */
-const KICKOFF_STEP_LABELS = ['My part', 'Skills + growth', 'Working together', 'The human'];
+const KICKOFF_STEP_LABELS = ['My part', 'Skills + growth', 'Working together', 'About You'];
 const KICKOFF_FEEDBACK = ['Direct + specific', 'Conversational', 'Written first', '1:1', 'In the moment', 'Give me time to process'];
 const KICKOFF_ENERGIES = ['Curious & ready', 'Let’s build something', 'Finding my feet', 'Coffee first', 'This challenge is wicked cool',];
 const EFFORT_SKILL_SUGGESTIONS = ['Systems engineering','Research','Data analysis','Visual design','Software development','Graphic Design','Hardware','Test & evaluation','Writing','Facilitation','Planning','Operations','Domain knowledge'];
