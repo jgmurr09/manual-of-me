@@ -155,8 +155,8 @@ const TEAM = [
     background:'Experience strategy · Immersive Events · Strategic Communications · Engagement Design',
     outside:'Travel Adventures · Exploring New Places · Soccer Sidelines · Finding the Next Great Experience',
     link:'',
-    image:'',
-    position:''
+    image:'assets/shannon-thornton.png',
+    position:'50%, 30%'
   },
 ];
 
