@@ -146,6 +146,18 @@ const TEAM = [
     link:'',
     image:''
   },
+  {
+    name:'Shannon Thornton',
+    role:'Sponsor Experience Manager',
+    initials:'ST',
+    ask:'Sponsor experiences, creative engagements, events and workshops, storytelling, and making connections',
+    summary:'Bring people, purpose, and creativity together to design meaningful experiences that strengthen relationships, spark connections, and make TANG’s mission memorable for sponsors and teammates alike.',
+    background:'Experience strategy · Immersive Events · Strategic Communications · Engagement Design',
+    outside:'Travel Adventures · Exploring New Places · Soccer Sidelines · Finding the Next Great Experience',
+    link:'',
+    image:'',
+    position:''
+  },
 ];
 
 const RESOURCES = [
