@@ -209,20 +209,20 @@ const DEFAULT_STATE = {
 const PATRICK_EXAMPLE = {
   profile:{
     name:'Patrick Alfonzo', pronouns:'', careerStage:'Senior / experienced', connectionType:'APL teammate', organization:'TANG', location:'San Diego, CA', photo:'assets/patrick-alfonzo.jpg',
-    intro:'Patrick is an HCD strategist who brings together history, submarine operations, Navy acquisition, and undersea experience. He gravitates toward hard problems where people, culture, technology, history, and the future collide.',
-    fun:'Stillness, solitude, family time, and looking for inspiration in uncommon places.',
-    knowTooMuch:'Submarines, Navy acquisition, undersea systems, and history.',
-    proud:'Building a career that bridges academia, the submarine community, Navy acquisition, and HCD and using that range to help teams move complexity toward action.',
-    idealBuild:'A project where I can combine HCD, Navy context, emerging technology, and future-oriented thinking to help a team make a hard decision or build something tangible.',
-    askMeAbout:'Submarines, Navy context, history, or a hard problem worth unpacking.',
-    communicationStyle:'Thoughtful + curious', workingStyle:'Reflective + collaborative',
+    intro:'I’m an HCD strategist and retired submariner. I help teams turn complex questions into practical next steps.',
+    fun:'Family time, stillness, and inspiration in uncommon places.',
+    knowTooMuch:'',
+    proud:'Building a career across academia, submarine operations, Navy acquisition, and HCD.',
+    idealBuild:'A hands-on project that connects Navy experience, HCD, and emerging technology.',
+    askMeAbout:'Navy history, submarines, or finding patterns in a complicated problem.',
+    communicationStyle:'Thoughtful and curious', workingStyle:'Reflective and collaborative',
     teamMakesGreat:['Curiosity','Shared ownership','Trust'], teamOther:'',
     feedback:['Conversational','Direct + specific','Give me time to process'], feedbackOther:'',
-    bestSpectrum:{direction:1,collaboration:3,pace:1,startingPoint:1},
-    bestWhenOther:'Give me enough context to see the pattern, then room to ask a better question.',
-    helpForm:['Give me context','Talk it through with me','Give me space to work it out'], helpOther:'',
-    organize:'Notes, patterns, conversations, and a clear next question',
-    stress:'I may get quieter and more reflective while I work the problem.',
+    bestSpectrum:{direction:1,collaboration:3,pace:1,startingPoint:null},
+    bestWhenOther:'',
+    helpForm:['Talk it through with me','Give me space to work it out'], helpOther:'',
+    organize:'Notes and a clear next question.',
+    stress:'I may get quieter while I work through the problem.',
     strengths:['collaboration','ambiguity','creativity','socialAwareness'],
     growth:['communication','givingFeedback'], archetype:'', birthday:'', snack:'', drink:'', celebration:'',
   },
@@ -733,8 +733,22 @@ function feedbackText(){return [...state.profile.feedback,state.profile.feedback
 function teamText(){return [...state.profile.teamMakesGreat,state.profile.teamOther].filter(Boolean).join(' · ');}
 function helpText(){return [...state.profile.helpForm,state.profile.helpOther].filter(Boolean).join(' · ');}
 function connectionText(){return [state.profile.careerStage,state.profile.connectionType].filter(Boolean).join(' · ');}
-function spectrumPhrase(s){const v=state.profile.bestSpectrum[s.id];if(v===null)return '';if(v===0)return s.left;if(v===1)return `Lean ${s.left.toLowerCase()}`;if(v===2)return `${s.left} + ${s.right}`;if(v===3)return `Lean ${s.right.toLowerCase()}`;return s.right;}
+function spectrumPhrase(s){
+  const v=state.profile.bestSpectrum[s.id];if(v===null||v===undefined)return '';
+  const phrases={
+    direction:['I have plenty of room to explore.','I have room to explore within a broad goal.','I can balance exploration with a clear destination.','I have a clear destination and some room to explore.','I have a clearly defined destination.'],
+    collaboration:['I have uninterrupted time to focus.','I can work independently, with time to check in.','I can balance focused work with collaboration.','I can bounce ideas around with teammates.','I can work through ideas together.'],
+    pace:['I have plenty of time to think things through.','I have time to reflect before moving ahead.','I can balance reflection with moving forward.','I can make progress and refine as I go.','I can move quickly and iterate.'],
+    startingPoint:['I see the big picture before the details.','I understand the wider context before getting into details.','I can connect the big picture to a concrete example.','I have a concrete example to connect to the bigger picture.','I can start with a concrete example.']
+  };
+  return phrases[s.id]?.[v]||'';
+}
 function spectrumSummary(){return SPECTRA.map(s=>spectrumPhrase(s)).filter(Boolean);}
+function learningPreferenceText(){
+  const phrases={cheatsheet:'a short reference',show:'a quick demonstration',try:'a real task to practice',pair:'time with a teammate',experience:'firsthand experience'};
+  const items=state.onboarding.learningModes.map(id=>phrases[id]).filter(Boolean);
+  return items.length>2?`${items.slice(0,-1).join(', ')}, and ${items.at(-1)}`:items.join(' and ');
+}
 function onboardingSummarySentence(){
   const modes=state.onboarding.learningModes.map(id=>LEARNING_MODES.find(m=>m.id===id)?.title).filter(Boolean);
   const deep=SUPPORT_TOPICS.filter(t=>state.onboarding.support[t.id]!==null&&state.onboarding.support[t.id]<=1).map(t=>t.label);
@@ -785,12 +799,12 @@ function manualDocument(){
     {label:'Creativity Archetype',text:p.archetype},
     {label:'Working with me',text:work},
     {label:'I do my best work when',text:[...spectrumSummary(),p.bestWhenOther].filter(Boolean).join('\n')},
-    {label:'Help me get unstuck',text:[helpText(),p.organize&&`I organize through: ${p.organize}`,p.stress&&`Under stress you might notice: ${p.stress}`].filter(Boolean).join('\n')},
+    {label:'Help me get unstuck',text:[helpText(),p.organize&&`How I organize: ${p.organize}`,p.stress&&`When I’m stressed: ${p.stress}`].filter(Boolean).join('\n')},
     {label:'Something I’m proud of',text:p.proud},
-    {label:'What I’m building',text:p.idealBuild},
+    {label:'What I’d like to build',text:p.idealBuild},
     {label:'Skills I want to build',text:p.growth.map(skillLabel).join(' · ')},
-    {label:'Beyond the work',text:[p.fun&&`Usually: ${p.fun}`,p.knowTooMuch&&`I know way too much about: ${p.knowTooMuch}`,p.askMeAbout&&`Ask me about: ${p.askMeAbout}`].filter(Boolean).join('\n')},
-    {label:'Onboarding me',text:[state.onboarding.pace,state.onboarding.learningModes.map(id=>LEARNING_MODES.find(m=>m.id===id)?.title).filter(Boolean).join(' · '),supportSummaryList().filter(x=>x.meta.value<=1).map(x=>`Lean in: ${x.label}`).join(' · ')].filter(Boolean).join('\n')},
+    {label:'Beyond the work',text:[p.fun&&`Off the clock: ${p.fun}`,p.knowTooMuch&&`I know way too much about: ${p.knowTooMuch}`,p.askMeAbout&&`Ask me about: ${p.askMeAbout}`].filter(Boolean).join('\n')},
+    {label:'Onboarding me',text:[state.onboarding.pace&&`Pace: ${state.onboarding.pace}`,learningPreferenceText()&&`Learning: ${learningPreferenceText()}`,supportSummaryList().filter(x=>x.meta.value<=1).map(x=>`Walk me through: ${x.label}`).join(' · ')].filter(Boolean).join('\n')},
     {label:'Good to know',text:[p.snack&&`Snack: ${p.snack}`,p.drink&&`Drink: ${p.drink}`,p.celebration&&`Recognition: ${p.celebration}`].filter(Boolean).join('\n')}
   ].filter(section=>section.text)};
 }
@@ -892,7 +906,8 @@ function drawIntroCanvas(){
   if(p.idealBuild)blocks.push(['HOPING TO BUILD',p.idealBuild]);
   if(p.growth.length)blocks.push(['GROWING',p.growth.map(skillLabel).join(' · ')]);
   if(p.knowTooMuch)blocks.push(['KNOWS WAY TOO MUCH ABOUT',p.knowTooMuch]);
-  if(p.askMeAbout||p.fun)blocks.push(['ASK ME ABOUT',[p.askMeAbout,p.fun].filter(Boolean).join(' · ')]);
+  if(p.askMeAbout)blocks.push(['ASK ME ABOUT',p.askMeAbout]);
+  if(p.fun)blocks.push(['OFF THE CLOCK',p.fun]);
   const fuel=[p.snack,p.drink].filter(Boolean).join(' + ');if(fuel)blocks.push(['GOOD TO KNOW',fuel]);
   ctx.font='700 34px Arial';const blocksHeight=blocks.reduce((sum,[,text])=>sum+wrapCanvasLines(ctx,text,936).length*42+76,0);
   c.height=Math.max(1350,headerHeight+blocksHeight+220);c.manualPayload=profilePNGData(p,p.archetype?CARD_TRANSFER_FIELDS.filter(key=>key!=='workingStyle'):CARD_TRANSFER_FIELDS);ctx=c.getContext('2d');ctx.fillStyle=s.bg;ctx.fillRect(0,0,c.width,c.height);
@@ -968,16 +983,14 @@ function preferredLearningActions(){
 }
 function teamActionFor(x){
   const v=x.meta.value;
-  const learns=preferredLearningActions();
-  const learningTail=learns.length?` Best fit: ${learns.join(' + ')}.`:'';
-  if(v===3)return `Do not schedule training. Confirm they can get moving, then stay available if a question comes up.`;
-  if(v===2)return `Offer a 5–10 minute refresher or current cheat sheet; avoid a full walkthrough unless they ask.${learningTail}`;
-  if(v===1)return `Assign a TANGmate and give a short guided walkthrough tied to a real task.${learningTail}`;
-  if(v===0)return `Build the foundation deliberately: start with context, walk through the basics, then follow with a hands-on rep and a check-in.${learningTail}`;
+  if(v===3)return `Skip basic training. Confirm they can get started, then stay available for questions.`;
+  if(v===2)return `Offer a 5–10 minute refresher or current reference. Add a walkthrough if they ask.`;
+  if(v===1)return `Pair them with a TANGmate for a short walkthrough tied to a real task.`;
+  if(v===0)return `Explain the basics, practice a real task together, then check in.`;
   return `No action yet. Confirm this preference before assigning training or resources.`;
 }
 function teamActionList(){return buildPlan().filter(x=>x.meta.value!==null).map(x=>({...x,action:teamActionFor(x)}));}
-function learningSentence(){const names=state.onboarding.learningModes.map(id=>LEARNING_MODES.find(m=>m.id===id)?.title).filter(Boolean);return names.length?`When something is new: ${names.join(' + ')}.`:'Add a learning preference and this plan will get more specific.';}
+function learningSentence(){const preferences=learningPreferenceText();return preferences?`For new topics, use ${preferences}.`:'Add a learning preference and this plan will get more specific.';}
 function resourceRecommendationCard(x){const res=x.resource;if(!res)return `<div class="card"><span class="resource-mark">NEXT</span><h3>${x.label}</h3><p class="muted">Ask the onboarding team for the best current resource, person, or experience.</p></div>`;return `<div class="card"><div class="card-title-row"><span class="resource-mark">${res.mark}</span><span class="badge ${res.access==='Public'?'public':'lock'}">${res.access}</span></div><h3 class="resource-rec-title">${res.title}</h3><p class="muted">${res.desc}</p>${res.url?`<a class="btn light" href="${res.url}" target="_blank" rel="noreferrer">Open resource ↗</a>`:`<button class="btn light ask-resource" data-ask-resource="${escapeHTML(res.title)}">Ask a TANGmate ↗</button>`}</div>`;}
 
 function drawOnboardingHeader(ctx,p,pageLabel,pageTitle){
@@ -1013,12 +1026,18 @@ function drawChoiceCards(ctx,items,x,y,w){
   return y;
 }
 function drawActionCards(ctx,items,x,y,w){
-  const gap=22,col=(w-gap)/2,rowH=186;
+  const gap=22,col=(w-gap)/2;
   for(let i=0;i<items.length;i+=2){
-    items.slice(i,i+2).forEach((item,j)=>{
+    const pair=items.slice(i,i+2).map(item=>{
+      ctx.font='700 18px Arial';const labels=wrapCanvasLines(ctx,item.label.toUpperCase(),col-52);
+      ctx.font='700 21px Arial';const lines=wrapCanvasLines(ctx,item.action,col-52);
+      return {labels,lines};
+    });
+    const rowH=Math.max(156,...pair.map(item=>30+item.labels.length*24+16+item.lines.length*28+26));
+    pair.forEach((item,j)=>{
       const tx=x+j*(col+gap);ctx.fillStyle='#fff';roundRect(ctx,tx,y,col,rowH,18,true);
-      ctx.fillStyle=COLORS.blue;ctx.font='700 18px Arial';ctx.fillText(item.label.toUpperCase(),tx+26,y+35);
-      ctx.fillStyle=COLORS.navy;ctx.font='700 21px Arial';drawWrapped(ctx,item.action,tx+26,y+72,col-52,28);
+      let lineY=y+35;ctx.fillStyle=COLORS.blue;ctx.font='700 18px Arial';item.labels.forEach(line=>{ctx.fillText(line,tx+26,lineY);lineY+=24;});
+      lineY+=13;ctx.fillStyle=COLORS.navy;ctx.font='700 21px Arial';item.lines.forEach(line=>{ctx.fillText(line,tx+26,lineY);lineY+=28;});
     });
     y+=rowH+18;
   }
@@ -1030,9 +1049,9 @@ function drawOnboardingCanvas(){
   if(!choices&&!actions)return;
   const p=state.profile;
   const recovery={format:'tang-manual',version:1,kind:'profile',profile:pickTransferFields(p,['name','preferredName','careerStage','connectionType','snack','drink','celebration']),onboarding:structuredClone(state.onboarding)};if(choices)choices.manualPayload=recovery;if(actions)actions.manualPayload=recovery;
-  const learn=[state.onboarding.pace,state.onboarding.learningModes.map(id=>LEARNING_MODES.find(m=>m.id===id)?.title).filter(Boolean).join(' + ')].filter(Boolean).join('   •   ')||'—';
+  const learn=[state.onboarding.pace&&`Pace: ${state.onboarding.pace}`,learningPreferenceText()&&`Learning: ${learningPreferenceText()}`].filter(Boolean).join('\n')||'—';
   const access=state.onboarding.access.join(' · ')||'Not added yet';
-  const hospitality=[p.snack&&`Snack: ${p.snack}`,p.drink&&`Drink: ${p.drink}`,p.celebration&&`Recognition: ${p.celebration}`].filter(Boolean).join('   •   ')||'No optional welcome preferences added.';
+  const hospitality=[p.snack&&`Snack: ${p.snack}`,p.drink&&`Drink: ${p.drink}`,p.celebration&&`Recognition: ${p.celebration}`].filter(Boolean).join('   •   ');
   const choicesList=[...supportSummaryList(),...toolSummaryList()];
   if(choices){
     choices.width=1600;choices.height=2071;const ctx=choices.getContext('2d');
@@ -1040,16 +1059,19 @@ function drawOnboardingCanvas(){
     let y=448;y=canvasSection(ctx,'HOW I LEARN',learn,90,y,1420,29);y=canvasSection(ctx,'ACCESS TODAY',access,90,y,1420,27);
     ctx.fillStyle=COLORS.blue;ctx.font='700 22px Arial';ctx.fillText('SUPPORT + TOOL CHOICES',90,y);y+=34;
     y=drawChoiceCards(ctx,choicesList,90,y,1420);
-    ctx.fillStyle=COLORS.blue;ctx.font='700 20px Arial';ctx.fillText('OPTIONAL WELCOME PREFERENCES',90,y+8);
-    ctx.fillStyle='#fff';roundRect(ctx,90,y+28,1420,100,16,true);ctx.fillStyle=COLORS.navy;ctx.font='400 20px Arial';drawWrapped(ctx,hospitality,118,y+69,1364,27);
+    if(hospitality){
+      ctx.fillStyle=COLORS.blue;ctx.font='700 20px Arial';ctx.fillText('OPTIONAL WELCOME PREFERENCES',90,y+8);
+      ctx.fillStyle='#fff';roundRect(ctx,90,y+28,1420,100,16,true);ctx.fillStyle=COLORS.navy;ctx.font='400 20px Arial';drawWrapped(ctx,hospitality,118,y+69,1364,27);
+    }
     drawOnboardingFooter(ctx,1);
   }
   if(actions){
     actions.width=1600;actions.height=2071;const ctx=actions.getContext('2d');
     drawOnboardingHeader(ctx,p,'PAGE 2 · TEAM ACTIONS','What we should do next');
-    ctx.fillStyle='#fff';roundRect(ctx,90,445,1420,112,18,true);ctx.fillStyle=COLORS.navy;ctx.font='700 25px Arial';ctx.fillText('USE THEIR PREFERENCES TO CHANGE THE ONBOARDING EXPERIENCE',120,488);ctx.fillStyle=COLORS.gray;ctx.font='400 22px Arial';drawWrapped(ctx,`${learningSentence()} These are recommended team behaviors, not extra tasks for the new teammate.`,120,527,1360,29);
-    ctx.fillStyle=COLORS.blue;ctx.font='700 22px Arial';ctx.fillText('ACTIONABLE RESULTS',90,610);
-    drawActionCards(ctx,teamActionList(),90,642,1420);
+    ctx.font='400 22px Arial';const introLines=wrapCanvasLines(ctx,learningSentence(),1360),introHeight=108+introLines.length*30;
+    ctx.fillStyle='#fff';roundRect(ctx,90,445,1420,introHeight,18,true);ctx.fillStyle=COLORS.navy;ctx.font='700 25px Arial';ctx.fillText('HOW TO GET THEM STARTED',120,488);ctx.fillStyle=COLORS.gray;ctx.font='400 22px Arial';introLines.forEach((line,i)=>ctx.fillText(line,120,527+i*30));
+    const actionY=445+introHeight+50;ctx.fillStyle=COLORS.blue;ctx.font='700 22px Arial';ctx.fillText('NEXT STEPS BY TOPIC',90,actionY);
+    drawActionCards(ctx,teamActionList(),90,actionY+32,1420);
     drawOnboardingFooter(ctx,2);
   }
 }
@@ -1180,10 +1202,10 @@ function renderExamples(){
   const plan=withPatrickExample(()=>buildPlan());
   app.innerHTML=`<div class="shell wide examples-shell">
     <div class="examples-hero">
-      <div><span class="eyebrow">Output examples</span><h1 class="page-title">See where this heads.</h1><p class="lede">Here is a completed example using Patrick so you can see what each chunk becomes before you answer a single question.</p></div>
+      <div><span class="eyebrow">Output examples</span><h1 class="page-title">Patrick’s example.</h1><p class="lede">See how a few useful answers become a Manual, teammate card, and onboarding plan.</p></div>
       <div class="examples-person"><img src="assets/patrick-alfonzo.jpg" alt="Patrick Alfonzo"><div><strong>Patrick Alfonzo</strong><span>Example teammate profile</span></div></div>
     </div>
-    <div class="card example-note"><strong>Illustrative example.</strong><span>Bio details come from Patrick’s provided bio. Working-style, growth, tool, and onboarding preferences are sample responses added only to demonstrate the full experience—not statements Patrick has personally confirmed.</span></div>
+    <div class="card example-note"><strong>Illustrative example.</strong><span>Patrick’s background comes from his bio. Working and onboarding preferences are sample responses.</span></div>
 
     <nav class="example-jump" aria-label="Example outputs">
       <a href="#example-manual">Manual of Me</a><a href="#example-intro">Teammate intro</a><a href="#example-flight">Flight plan</a><a href="#example-brief">Onboarding brief</a>
@@ -1256,4 +1278,5 @@ document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLower
 const entryRoute=typeof location!=='undefined'?location.hash.slice(1):'';
 if(['kickoffs','restore'].includes(entryRoute)){state.route=entryRoute;state.wizard=false;state.ui.introSeen=true;}
 render();
+
 
