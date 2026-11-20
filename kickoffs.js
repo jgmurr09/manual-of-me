@@ -124,12 +124,15 @@ function guideHeaderLayout(ctx,doc,width){
   return {nameLines,subtitleLines,callLines,height:Math.max(doc.photo?310:0,104+nameLines.length*76+subtitleLines.length*36+callLines.length*40)};
 }
 function paintGuideHeader(ctx,doc,layout){
+  ctx.save();ctx.textBaseline='middle';
   ctx.fillStyle=COLORS.navy;ctx.fillRect(0,0,ctx.canvas.width,layout.height);
-  let y=76;ctx.font='700 64px Arial';ctx.fillStyle='white';layout.nameLines.forEach(line=>{ctx.fillText(line,90,y);y+=76;});
-  ctx.font='400 30px Arial';ctx.fillStyle='#dbe6ef';layout.callLines.forEach(line=>{ctx.fillText(line,90,y-14);y+=40;});
-  ctx.font='700 25px Arial';layout.subtitleLines.forEach(line=>{ctx.fillText(line,90,y);y+=36;});
-  if(doc.photo)drawCanvasPhoto(ctx,doc.photo,ctx.canvas.width-300,50,210,210,doc.title,doc.photoPosition);
+  const contentHeight=layout.height-10,textHeight=layout.nameLines.length*76+layout.callLines.length*40+layout.subtitleLines.length*36;
+  let y=(contentHeight-textHeight)/2;ctx.font='700 64px Arial';ctx.fillStyle='white';layout.nameLines.forEach(line=>{ctx.fillText(line,90,y+38);y+=76;});
+  ctx.font='400 30px Arial';ctx.fillStyle='#dbe6ef';layout.callLines.forEach(line=>{ctx.fillText(line,90,y+20);y+=40;});
+  ctx.font='700 25px Arial';layout.subtitleLines.forEach(line=>{ctx.fillText(line,90,y+18);y+=36;});
+  if(doc.photo)drawCanvasPhoto(ctx,doc.photo,ctx.canvas.width-300,(contentHeight-210)/2,210,210,doc.title,doc.photoPosition);
   [COLORS.blue,COLORS.orange,COLORS.yellow,COLORS.pink].forEach((color,i)=>{ctx.fillStyle=color;ctx.fillRect(i*ctx.canvas.width/4,layout.height-10,ctx.canvas.width/4,10);});
+  ctx.restore();
 }
 function guideCardLayout(ctx,section,width){
   ctx.font='700 24px Arial';const labels=wrapCanvasLines(ctx,section.label.toUpperCase(),width-64);
@@ -179,3 +182,4 @@ function trackCanvasAsset(canvas,promise){
   const jobs=canvasAssetJobs.get(canvas);jobs.add(promise);promise.finally(()=>jobs.delete(promise));
 }
 async function waitForCanvasAssets(canvas){await Promise.allSettled([document.fonts?.ready,...(canvasAssetJobs.get(canvas)||[])]);}
+
